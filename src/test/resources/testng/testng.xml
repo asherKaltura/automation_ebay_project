@@ -2,7 +2,7 @@
 
 <suite name="E2E Suite">
 
-    <test name="CSV Data Driven Test">
+    <test name="E2E - Data Driven Test">
 
         <!--
             IMPORTANT:
