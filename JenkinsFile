@@ -1,0 +1,95 @@
+pipeline {
+    agent any
+
+    environment {
+        DIFIDO_URL = "http://localhost:8090"       // כתובת שרת ה-Difido שלך
+        DIFIDO_HOST = "localhost"
+        DIFIDO_PORT = "8090"
+        BUILD_USER = "jenkins"
+        VERSION = "1.0"
+        LEGACY = "false"
+        ENV = "dev"
+        NODE_NAME = "windows-agent"
+    }
+    stages {
+
+        stage('Clean Workspace') {
+            steps {
+                echo 'Cleaning old files...'
+                bat """
+                    del /Q execution_id.txt 2>nul
+                    del /Q remoteDifido.properties 2>nul
+                """
+            }
+        }
+
+        stage('Prepare Difido Properties') {
+            steps {
+                script {
+                    echo 'Preparing Difido configuration file...'
+
+                    def executionId = ''
+                    if (!env.DIFIDO_EXECUTION_ID || env.DIFIDO_EXECUTION_ID == '-1') {
+                        echo "Creating new Difido execution..."
+
+                        // צור Execution חדש ב-Difido וקבל את ה-ID
+                        bat """
+                            curl -X POST -H "Content-Type: application/json" ^
+                            -d "{\\"description\\":\\"#${env.BUILD_NUMBER}-${env.ENV}\\", \\"executionProperties\\":{\\"User\\":\\"${env.BUILD_USER}\\", \\"Version\\":\\"${env.VERSION}\\", \\"Legacy\\":\\"${env.LEGACY}\\", \\"Node\\":\\"${env.NODE_NAME}\\"}, \\"shared\\":true, \\"forceNew\\":true}" ^
+                            ${env.DIFIDO_URL}/api/executions/ > execution_id.txt
+                        """
+
+                        executionId = readFile('execution_id.txt').trim()
+                        echo "Got execution id: ${executionId}"
+                    } else {
+                        executionId = env.DIFIDO_EXECUTION_ID
+                    }
+
+                    env.EXECUTION_ID = executionId
+
+                    // צור קובץ הגדרות Difido
+                    bat """
+                        echo dont.compress.extensions=zip > remoteDifido.properties
+                        echo port=${env.DIFIDO_PORT} >> remoteDifido.properties
+                        echo compress.files.above=5000 >> remoteDifido.properties
+                        echo append.to.existing.execution=true >> remoteDifido.properties
+                        echo existing.execution.id=${executionId} >> remoteDifido.properties
+                        echo force.new.execution=false >> remoteDifido.properties
+                        echo enabled=true >> remoteDifido.properties
+                        echo execution.properties=User=${env.BUILD_USER};Version=${env.VERSION} >> remoteDifido.properties
+                        echo host=${env.DIFIDO_HOST} >> remoteDifido.properties
+                        echo use.shared.execution=true >> remoteDifido.properties
+                    """
+
+                    echo 'remoteDifido.properties created successfully.'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo 'Running automated tests...'
+                bat "mvn clean test"
+            }
+        }
+
+        stage('Publish to Difido') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                echo 'Publishing results to Difido server...'
+                bat "curl -X POST ${env.DIFIDO_URL}/api/executions/${env.EXECUTION_ID}/complete"
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished'
+        }
+        failure {
+            echo ' Tests failed'
+        }
+    }
+}
