@@ -23,7 +23,7 @@ jobs:
           cache: maven
 
       - name: Run tests
-        run: run: mvn clean install -Dheadless=true
+        run: mvn clean install -Dheadless=true
         working-directory: automation_ebay_project
 
       - name: Upload Allure results
