@@ -1,4 +1,4 @@
-package tests;
+package test;
 
 import assertion.KAssertion;
 import il.co.topq.difido.ReportDispatcher;

@@ -4,8 +4,6 @@ Playwright-based Java automation suite for eBay — search, cart, and assertion 
 
 ---
 
----
-
 ## Setup
 
 ### 1. Clone the repository
@@ -14,9 +12,7 @@ git clone https://github.com/asherKaltura/automation_ebay_project
 cd automation_ebay_project
 ```
 
-
-
-### 2 Configure credentials
+### 2. Configure credentials
 Edit `src/test/resources/config.properties`:
 ```properties
 login.email=your_ebay_email@example.com
@@ -36,28 +32,28 @@ loginUrl=https://signin.ebay.com
 
 ### Run all tests (TestNG suite)
 ```bash
-mvn test
+mvn clean install test
 ```
 
 ### Run with debug/slow-motion (500ms between steps)
 ```bash
-mvn test -Ddebug=true
+mvn clean install test -Ddebug=true
 ```
 
 ### Run headless (for CI)
 ```bash
-mvn test -Dheadless=true
+mvn clean install test -Dheadless=true
 ```
 
 ### Run specific test class
 ```bash
-mvn test -Dtest=E2ETest
-mvn test -Dtest=E2EDataDrivenTest
+mvn clean install test -Dtest=E2ETest
+
 ```
 
 ### Run via TestNG XML
 ```bash
-mvn test -DsuiteXmlFile=src/test/resources/testng/testng.xml
+mvn clean install test -DsuiteXmlFile=src/test/resources/testng/testng.xml
 ```
 
 ---
@@ -66,8 +62,7 @@ mvn test -DsuiteXmlFile=src/test/resources/testng/testng.xml
 
 After a test run, Allure results are written to `target/allure-results/`.
 
-```maven
-
+```bash
 mvn allure:serve
 ```
 
@@ -91,12 +86,14 @@ src/
 │   │   ├── ProductPage          # addItemsToCart + variant dropdown handling
 │   │   └── CartPage             # openCart + getCartTotal
 │   ├── report/            # KReportManager / Difido report integration
+│   ├── test/
+│   │   └── AbstractTestCase     # base lifecycle hooks (Difido)
 │   └── utils/
 │       ├── AssertUtils          # assertCartTotalNotExceeds
-│       ├── CleanupManager       #not in use
+│       ├── CleanupManager       # not in use
 │       ├── ConfigReader         # reads config.properties
-│       ├── DriverManager        #not in use
-│       ├── FakerUtils           #not in use
+│       ├── DriverManager        # not in use
+│       ├── FakerUtils           # not in use
 │       ├── FileUtilities
 │       └── FlexibleDataProvider # TestNG DataProvider: CSV / Excel / JSON
 │
@@ -111,8 +108,9 @@ src/test/resources/
     ├── config.properties
     ├── data/
     │   ├── csvData.csv          # query, maxPrice, limit
-    │   └── excelData.xlsx
-    └── testng/tests.xml
+    │   ├── excelData.xlsx
+    │   └── jsonData.json
+    └── testng/testng.xml
 ```
 
 ### Design Patterns
@@ -125,24 +123,15 @@ src/test/resources/
 ---
 
 ## Test Data
+
 `src/test/resources/data/jsonData.json`:
+```json
 [
-{
-"query": "shoes",
-"maxPrice": 220,
-"limit": 5
-},
-{
-"query": "laptop",
-"maxPrice": 1000,
-"limit": 3
-},
-{
-"query": "phone",
-"maxPrice": 500,
-"limit": 2
-}
+  { "query": "shoes",  "maxPrice": 220,  "limit": 5 },
+  { "query": "laptop", "maxPrice": 1000, "limit": 3 },
+  { "query": "phone",  "maxPrice": 500,  "limit": 2 }
 ]
+```
 
 `src/test/resources/data/csvData.csv`:
 ```
@@ -152,20 +141,24 @@ laptop,1000,3
 phone,500,2
 ```
 
-To add more test cases, append rows to the CSV — no code changes required.
+To add more test cases, append rows to the CSV or JSON — no code changes required.
 
 ---
 
-## Limitations & Assumptions
+## CI / GitHub Actions
 
+A `maven.yml` workflow is included under `.github/workflows/` for GitHub Actions integration.
+
+```bash
+mvn clean install test -Dheadless=true
+```
 
 ## CI / Jenkins
 
-A `JenkinsFile` is included at the project root for pipeline integration.  
-Key Maven flags for CI runs:
+A `JenkinsFile` is included at the project root for pipeline integration.
 
 ```bash
-mvn test -Dheadless=true -Dsurefire.suiteXmlFiles=src/test/resources/testng/tests.xml
+mvn clean install test -Dheadless=true -Dsurefire.suiteXmlFiles=src/test/resources/testng/testng.xml
 ```
 
 ---

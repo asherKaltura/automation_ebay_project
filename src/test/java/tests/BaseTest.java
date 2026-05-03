@@ -4,10 +4,11 @@ import com.microsoft.playwright.*;
 import factory.BrowserFactory;
 import io.qameta.allure.testng.AllureTestNg;
 import org.testng.annotations.*;
+import test.AbstractTestCase;
 import utils.ConfigReader;
 
 @Listeners({AllureTestNg.class})
-public class BaseTest  extends  AbstractTestCase{
+public class BaseTest  extends AbstractTestCase {
 
     protected Playwright playwright;
     protected Browser browser;
