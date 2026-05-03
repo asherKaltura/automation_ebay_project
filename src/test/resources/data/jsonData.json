@@ -1,0 +1,17 @@
+[
+  {
+    "query": "shoes",
+    "maxPrice": 220,
+    "limit": 5
+  },
+  {
+    "query": "laptop",
+    "maxPrice": 1000,
+    "limit": 3
+  },
+  {
+    "query": "phone",
+    "maxPrice": 500,
+    "limit": 2
+  }
+]

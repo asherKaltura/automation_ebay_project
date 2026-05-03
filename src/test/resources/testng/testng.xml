@@ -1,0 +1,26 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="E2E Suite">
+
+    <test name="CSV Data Driven Test">
+
+        <!--
+            IMPORTANT:
+            These parameters override / replace any hardcoded or default values
+            used inside the test or DataProvider when read via ITestContext.
+                       <parameter name="dataFile" value="data/jsonData.json"/>
+        <parameter name="dataFile" value="data/csvData.csv"/>
+
+        -->
+        <parameter name="source" value="JSON"/>
+
+        <parameter name="dataFile" value="data/jsonData.json"/>
+        <parameter name="limit" value="1"/>
+
+        <classes>
+            <class name="tests.E2ETest"/>
+        </classes>
+
+    </test>
+
+</suite>
