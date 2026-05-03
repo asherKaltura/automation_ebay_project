@@ -23,15 +23,14 @@ jobs:
           cache: maven
 
       - name: Run tests
-        run: mvn clean install -Dheadless=true
-        working-directory: automation_ebay_project
+        run: mvn clean test -Dheadless=true
 
       - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
-          path: automation_ebay_project/target/allure-results/
+          path: target/allure-results/
           retention-days: 7
 
       - name: Upload Difido report
@@ -39,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: difido-report
-          path: automation_ebay_project/test-output/difido/
+          path: test-output/difido/
           retention-days: 7
