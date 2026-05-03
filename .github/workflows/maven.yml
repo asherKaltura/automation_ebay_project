@@ -1,0 +1,43 @@
+name: eBay Automation Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:   # allows manual trigger from GitHub UI
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run tests
+        run: run: mvn clean install -Dheadless=true
+        working-directory: automation_ebay_project
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: automation_ebay_project/target/allure-results/
+          retention-days: 7
+
+      - name: Upload Difido report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: difido-report
+          path: automation_ebay_project/test-output/difido/
+          retention-days: 7
