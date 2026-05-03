@@ -14,12 +14,9 @@ git clone https://github.com/asherKaltura/automation_ebay_project
 cd automation_ebay_project
 ```
 
-### 2. Install Playwright browsers
-```bash
-mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install"
-```
 
-### 3. Configure credentials
+
+### 2 Configure credentials
 Edit `src/test/resources/config.properties`:
 ```properties
 login.email=your_ebay_email@example.com
