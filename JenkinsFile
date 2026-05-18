@@ -26,16 +26,25 @@ pipeline {
             steps {
                 script {
 
-                    echo 'Preparing Difido configuration file...'
+                    echo 'Preparing Difido configuration...'
 
-                    // BUILD USER
-                    def buildUser =
-                        currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)?.userId ?:
-                        "unknown"
+                    // 👤 BUILD USER (SAFE - בלי sandbox issues)
+                    def buildUser = "unknown"
+                    def causes = currentBuild.getBuildCauses()
 
-                    //  BUILD INFO
+                    for (c in causes) {
+                        if (c.userId) {
+                            buildUser = c.userId
+                        }
+                    }
+
+                    // BUILD INFO
                     def buildNumber = env.BUILD_NUMBER
                     def nodeName = env.NODE_NAME
+
+                    echo "User: ${buildUser}"
+                    echo "Build: ${buildNumber}"
+                    echo "Node: ${nodeName}"
 
                     def executionId = ''
 
@@ -50,7 +59,7 @@ pipeline {
                         """
 
                         executionId = readFile('execution_id.txt').trim()
-                        echo "Got execution id: ${executionId}"
+                        echo "Execution ID: ${executionId}"
 
                     } else {
                         executionId = env.DIFIDO_EXECUTION_ID
@@ -58,7 +67,7 @@ pipeline {
 
                     env.EXECUTION_ID = executionId
 
-                    // 📄 Difido properties file
+                    // 📄 properties file ל-Difido
                     bat """
                         echo dont.compress.extensions=zip > remoteDifido.properties
                         echo port=${env.DIFIDO_PORT} >> remoteDifido.properties
@@ -67,12 +76,12 @@ pipeline {
                         echo existing.execution.id=${executionId} >> remoteDifido.properties
                         echo force.new.execution=false >> remoteDifido.properties
                         echo enabled=true >> remoteDifido.properties
-                        echo execution.properties=User=${buildUser};BuildNumber=${buildNumber};Node=${nodeName};Version=${env.VERSION} >> remoteDifido.properties
+                        echo execution.properties=User=${buildUser};BuildNumber=${buildNumber};Node=${nodeName};Version=${env.VERSION};Env=${env.ENV} >> remoteDifido.properties
                         echo host=${env.DIFIDO_HOST} >> remoteDifido.properties
                         echo use.shared.execution=true >> remoteDifido.properties
                     """
 
-                    echo "remoteDifido.properties created successfully."
+                    echo "remoteDifido.properties created."
                 }
             }
         }
