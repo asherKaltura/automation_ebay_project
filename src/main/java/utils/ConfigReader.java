@@ -35,7 +35,7 @@ public class ConfigReader {
 
     public static String get(String key) {
 
-        // 1. ENV Variable — המרה דינמית של המפתח
+        // 1. ENV Variable —
         String envKey = key.toUpperCase().replace(".", "_");
         String envVal = System.getenv(envKey);
         if (envVal != null && !envVal.isEmpty()) {

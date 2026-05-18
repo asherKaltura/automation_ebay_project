@@ -203,7 +203,7 @@ To add more test cases, append rows to the CSV or JSON — no code changes requi
 ## CI / GitHub Actions
 
 A `maven.yml` workflow is included under `.github/workflows/`.  
-Runs automatically on push/PR to `main` or `master`, or manually via "Run workflow".
+Runs automatically on push/PR to `master`, or manually via "Run workflow".
 
 ```bash
 mvn clean install test -P ci
