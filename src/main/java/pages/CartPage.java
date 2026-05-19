@@ -22,7 +22,6 @@ public class CartPage extends BasePagePlaywright {
         report.log("Navigating to cart: " + url);
         navigate(url);
     }
-
     // ===== GET CART TOTAL =====
     @Step("Get cart total")
     public double getCartTotal() {

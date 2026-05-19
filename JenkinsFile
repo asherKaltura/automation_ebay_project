@@ -28,7 +28,7 @@ pipeline {
 
                     echo 'Preparing Difido configuration...'
 
-                    // 👤 BUILD USER (SAFE - בלי sandbox issues)
+                    // 👤 BUILD USER
                     def buildUser = "unknown"
                     def causes = currentBuild.getBuildCauses()
 
