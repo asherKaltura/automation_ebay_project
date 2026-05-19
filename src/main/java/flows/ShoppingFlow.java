@@ -22,6 +22,7 @@ public class ShoppingFlow {
         this.cartPage = new CartPage(page);
     }
 
+
     @Step("Run full shopping flow: query={query}, maxPrice={maxPrice}, limit={limit}")
     public double run(String query, double maxPrice, int limit) {
 
