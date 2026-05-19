@@ -1,6 +1,7 @@
 package tests;
 
 import annotations.TestData;
+import enums.DataSource;
 import flows.ShoppingFlow;
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
@@ -19,7 +20,7 @@ public class E2ETest extends BaseTest {
     )
     @TestData(
             value = "data/csvData.csv",
-            source = enums.DataSource.CSV,
+            source = DataSource.CSV,
             limit = 1
     )
     @Story("Search, add to cart, and assert total")
