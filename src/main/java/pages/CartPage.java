@@ -23,6 +23,7 @@ public class CartPage extends BasePagePlaywright {
         navigate(url);
     }
 
+
     // ===== GET CART TOTAL =====
     @Step("Get cart total")
     public double getCartTotal() {
